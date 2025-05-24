@@ -1,0 +1,150 @@
+<!-- index.html с полной локализацией -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeCodeRX — Декодирование радиоданных</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      color: #212121;
+      transition: background-color 0.3s ease;
+    }
+    .logo {
+      width: 180px;
+    }
+    .btn-primary {
+      background-color: #00E676;
+      border-color: #00E676;
+    }
+    footer {
+      margin-top: 4rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #888;
+    }
+    .dark-mode {
+      background-color: #212121 !important;
+      color: #f5f7fa !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <div class="text-center mb-4">
+      <img src="/static/images/logo.svg" alt="Логотип DeCodeRX" class="logo">
+      <h1 class="mt-3" id="title">DeCodeRX</h1>
+      <p id="subtitle">Веб-приложение для декодирования радиотехнических данных</p>
+      <div class="d-flex justify-content-center gap-2">
+        <button class="btn btn-outline-secondary" onclick="toggleTheme()" id="themeBtn">Темная тема</button>
+        <select id="languageSelect" class="form-select w-auto" onchange="changeLanguage()">
+          <option value="ru">Русский</option>
+          <option value="en">English</option>
+        </select>
+        <a href="#" class="btn btn-outline-info" id="settingsLink">Настройки</a>
+      </div>
+    </div>
+
+    <form id="decodeForm">
+      <div class="mb-3">
+        <label for="dataInput" class="form-label" id="inputLabel">Введите данные или загрузите файл:</label>
+        <textarea class="form-control" id="dataInput" rows="5" placeholder="Пример: 01001000011001010110110001101100"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="fileInput" class="form-label" id="fileLabel">Загрузите файл (.txt или .bin):</label>
+        <input type="file" class="form-control" id="fileInput" accept=".txt,.bin">
+      </div>
+
+      <div class="mb-3">
+        <label for="protocolSelect" class="form-label" id="protocolLabel">Выберите протокол:</label>
+        <select class="form-select" id="protocolSelect">
+          <option value="binary" id="binaryOption">Бинарный</option>
+          <option value="hex" id="hexOption">Шестнадцатеричный</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="decodeBtn">Декодировать</button>
+      <button type="button" class="btn btn-outline-primary ms-2" onclick="exportResult('txt')" id="exportTxtBtn">Экспорт в .txt</button>
+      <button type="button" class="btn btn-outline-primary ms-2" onclick="exportResult('json')" id="exportJsonBtn">Экспорт в .json</button>
+    </form>
+
+    <div id="result" class="mt-4"></div>
+  </div>
+
+  <footer>
+    &copy; 2025 DeCodeRX | Выпускной проект
+  </footer>
+
+  <script>
+    const translations = {
+      ru: {
+        subtitle: "Веб-приложение для декодирования радиотехнических данных",
+        themeBtn: "Темная тема",
+        settingsLink: "Настройки",
+        inputLabel: "Введите данные или загрузите файл:",
+        fileLabel: "Загрузите файл (.txt или .bin):",
+        protocolLabel: "Выберите протокол:",
+        binaryOption: "Бинарный",
+        hexOption: "Шестнадцатеричный",
+        decodeBtn: "Декодировать",
+        exportTxtBtn: "Экспорт в .txt",
+        exportJsonBtn: "Экспорт в .json"
+      },
+      en: {
+        subtitle: "Web application for decoding radio data",
+        themeBtn: "Dark Mode",
+        settingsLink: "Settings",
+        inputLabel: "Enter data or upload a file:",
+        fileLabel: "Upload a file (.txt or .bin):",
+        protocolLabel: "Select protocol:",
+        binaryOption: "Binary",
+        hexOption: "Hexadecimal",
+        decodeBtn: "Decode",
+        exportTxtBtn: "Export to .txt",
+        exportJsonBtn: "Export to .json"
+      }
+    };
+
+    function applyLanguage(lang) {
+      const t = translations[lang];
+      document.getElementById('subtitle').innerText = t.subtitle;
+      document.getElementById('themeBtn').innerText = t.themeBtn;
+      document.getElementById('settingsLink').innerText = t.settingsLink;
+      document.getElementById('inputLabel').innerText = t.inputLabel;
+      document.getElementById('fileLabel').innerText = t.fileLabel;
+      document.getElementById('protocolLabel').innerText = t.protocolLabel;
+      document.getElementById('binaryOption').innerText = t.binaryOption;
+      document.getElementById('hexOption').innerText = t.hexOption;
+      document.getElementById('decodeBtn').innerText = t.decodeBtn;
+      document.getElementById('exportTxtBtn').innerText = t.exportTxtBtn;
+      document.getElementById('exportJsonBtn').innerText = t.exportJsonBtn;
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    function changeLanguage() {
+      const lang = document.getElementById('languageSelect').value;
+      localStorage.setItem('lang', lang);
+      applyLanguage(lang);
+    }
+
+    window.onload = () => {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+      }
+      const savedLang = localStorage.getItem('lang') || 'ru';
+      document.getElementById('languageSelect').value = savedLang;
+      applyLanguage(savedLang);
+    }
+  </script>
+</body>
+</html>
